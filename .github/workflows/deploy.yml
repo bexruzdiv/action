@@ -33,4 +33,4 @@ jobs:
           docker pull ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
           docker stop my-nginx-app || true
           docker rm my-nginx-app || true
-          docker run -d -p 8007:80 --name my-nginx-app ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
+          docker run -d -p 8007:80 --name my-nginx-app ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest 
