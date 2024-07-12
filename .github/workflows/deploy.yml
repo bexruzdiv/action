@@ -23,14 +23,23 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        id: build-image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest .
-          docker push ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-nginx-app
+          UNIQUE_TAG=${{ github.run_number }}
+          docker build -t $IMAGE_NAME:$UNIQUE_TAG -t $IMAGE_NAME:latest .
+
+      - name: Push Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-nginx-app
+          UNIQUE_TAG=${{ github.run_number }}
+          docker push $IMAGE_NAME:$UNIQUE_TAG
+          docker push $IMAGE_NAME:latest
 
       - name: Deploy Docker container
         run: |
           docker pull ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
           docker stop my-nginx-app || true
           docker rm my-nginx-app || true
-          docker run -d -p 8007:80 --name my-nginx-app ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest 
+          docker run -d -p 8007:80 --name my-nginx-app ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
